@@ -15,7 +15,7 @@ class OidcdJwtHelper
     protected OidcdSessionStorage $sessionStorage;
     private string $clientId;
 
-    public function __construct(string $clientId, OidcdSessionStorage $sessionStorage, OidcdUrlFetcher $urlFetcher)
+    public function __construct(OidcdUrlFetcher $urlFetcher, OidcdSessionStorage $sessionStorage, string $clientId)
     {
         $this->clientId = $clientId;
         $this->sessionStorage = $sessionStorage;
@@ -177,7 +177,11 @@ class OidcdJwtHelper
 
     private function getAccessTokenHeader(OidcdTokens $tokens): ?object
     {
-        return $this->decodeJwt($tokens->getAccessToken(), 0);
+        try {
+            return $this->decodeJwt($tokens->getAccessToken(), 0);
+        } catch (OidcdException $e) {
+            return null;
+        }
     }
 
     private function getKeyForHeader($keys, $header): object
@@ -187,12 +191,11 @@ class OidcdJwtHelper
                 if (!isset($header->kid) || $key->kid === $header->kid) {
                     return $key;
                 }
-            } else {
-                if ($key->alg === $header->alg && $key->kid === $header->kid) {
-                    return $key;
-                }
+            } elseif (isset($key->alg) && $key->alg === $header->alg && $key->kid === $header->kid) {
+                return $key;
             }
         }
+
         if (isset($header->kid)) {
             throw new OidcdAuthenticationException(sprintf('Unable to find a key for (algorithm, kid): %s, %s', $header->alg, $header->kid));
         }

@@ -38,7 +38,7 @@ interface OidcdClientInterface
      * @throws OidcdConfigurationException
      * @throws OidcdConfigurationResolveException
      */
-    public function generateAuthorizationRedirect(?string $prompt = null, array $scopes = ['openid']): RedirectResponse;
+    public function generateAuthorizationRedirect(?string $prompt = null, array $scopes = ['offline_access', 'openid', 'fields', 'email']): RedirectResponse;
 
     /**
      * Retrieve the user information.
