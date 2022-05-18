@@ -1,6 +1,6 @@
 <?php
 
-namespace Bash\Bundle\OIDCDBundle\Security\Factory;
+namespace Bash\Bundle\OIDCDBundle\Security;
 
 use Bash\Bundle\OIDCDBundle\DependencyInjection\BashOIDCDExtension;
 use Bash\Bundle\OIDCDBundle\Security\Exception\UnsupportedManagerException;
