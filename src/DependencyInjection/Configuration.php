@@ -1,6 +1,6 @@
 <?php
 
-namespace Bash\Bundle\CacheBundle\DependencyInjection;
+namespace Bash\Bundle\OIDCDBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
