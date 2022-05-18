@@ -106,7 +106,7 @@ class OidcdClient implements OidcdClientInterface
             $this->requestTokens('refresh_token', null, null, $refreshToken), false);
     }
 
-    public function generateAuthorizationRedirect(?string $prompt = null, array $scopes = ['openid']): RedirectResponse
+    public function generateAuthorizationRedirect(?string $prompt = null, array $scopes = ['openid'], bool $forceRememberMe = false): RedirectResponse
     {
         $data = [
             'client_id' => $this->clientId,
@@ -166,6 +166,7 @@ class OidcdClient implements OidcdClientInterface
     /**
      * @throws OidcdConfigurationException
      * @throws OidcdConfigurationResolveException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     protected function getAuthorizationEndpoint(): string
     {
@@ -175,6 +176,7 @@ class OidcdClient implements OidcdClientInterface
     /**
      * @throws OidcdConfigurationException
      * @throws OidcdConfigurationResolveException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     protected function getIssuer(): string
     {
@@ -184,6 +186,7 @@ class OidcdClient implements OidcdClientInterface
     /**
      * @throws OidcdConfigurationException
      * @throws OidcdConfigurationResolveException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     protected function getJwktUri(): string
     {
@@ -198,6 +201,7 @@ class OidcdClient implements OidcdClientInterface
     /**
      * @throws OidcdConfigurationException
      * @throws OidcdConfigurationResolveException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     protected function getTokenEndpoint(): string
     {
