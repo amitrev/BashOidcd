@@ -1,0 +1,64 @@
+{
+    "name": "bash/oidcd-bundle",
+    "type": "symfony-bundle",
+    "license": "proprietary",
+    "description": "BashOpenID Connect Discovery Bundle",
+    "authors": [
+        {
+            "name": "Atanas Mitrev",
+            "email": "amitrev@gmail.com",
+            "role": "Ninja"
+        }
+    ],
+    "keywords": [
+        "openid",
+        "oidc",
+        "openid connect"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Bash\\Bundle\\OIDCDBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bash\\Bundle\\OIDCDBundle\\Test\\": "src/Tests/"
+        }
+    },
+    "require": {
+        "php": "^7.4",
+        "ext-curl": "*",
+        "ext-filter": "*",
+        "ext-hash": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "psr/container": "^1.0",
+        "psr/log": "^1.1",
+        "symfony/config": "^5.4",
+        "symfony/dependency-injection": "^5.4",
+        "symfony/http-foundation": "^5.4",
+        "symfony/http-kernel": "^5.4",
+        "symfony/property-access": "^5.4",
+        "symfony/security-bundle": "^5.4",
+        "symfony/security-core": "^5.4",
+        "symfony/security-http": "^5.4",
+        "symfony/string": "^5.4",
+        "symfony/cache": "^5.4",
+        "phpseclib/phpseclib": "~3.0"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "phpunit/phpunit": "*",
+        "friendsofphp/php-cs-fixer": "^v3.0"
+    },
+    "scripts": {
+        "cs-fix-dry": "vendor/bin/php-cs-fixer fix --dry-run",
+        "cs-fix": "vendor/bin/php-cs-fixer fix",
+        "test": "phpunit --colors=always",
+        "testcover": "phpunit --coverage-text --colors=never"
+    },
+    "scripts-descriptions": {
+        "cs-fix": "Run php-cs-fixer in dry run mode (linting)"
+    }
+}
