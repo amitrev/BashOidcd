@@ -15,10 +15,8 @@ class OidcdUrlFetcher
 
     public function fetchUrl(string $url, ?array $params = null, array $headers = []): string
     {
-        // Create a new cURL resource handle
         $ch = curl_init();
 
-        // Determine whether this is a GET or POST
         if (null !== $params) {
             if (!is_array($params)) {
                 throw new OidcdAuthenticationException('The parameters should be specified as array!');
@@ -33,7 +31,6 @@ class OidcdUrlFetcher
             $headers[] = 'Content-Length: '.strlen($params);
         }
 
-        // Add a User-Agent header to prevent firewall blocks
         $curlVersion = curl_version()['version'];
         $headers[] = "User-Agent: curl/$curlVersion bash/oidcd-bundle";
 

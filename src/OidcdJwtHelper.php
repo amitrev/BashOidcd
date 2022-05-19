@@ -30,7 +30,6 @@ class OidcdJwtHelper
      */
     private static function b64url2b64(string $base64url): string
     {
-        // "Shouldn't" be necessary, but why not
         $padding = strlen($base64url) % 4;
         if ($padding > 0) {
             $base64url .= str_repeat('=', 4 - $padding);
@@ -195,7 +194,6 @@ class OidcdJwtHelper
                 return $key;
             }
         }
-
         if (isset($header->kid)) {
             throw new OidcdAuthenticationException(sprintf('Unable to find a key for (algorithm, kid): %s, %s', $header->alg, $header->kid));
         }
