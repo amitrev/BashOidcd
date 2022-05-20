@@ -161,7 +161,7 @@ class OidcdClient implements OidcdClientInterface
         return new OidcdUserData($data);
     }
 
-    /** TODO: refactoring ?!?! */
+    /** TODO: refactoring maybe ?!?! */
 
     /**
      * @throws OidcdConfigurationException
@@ -220,6 +220,7 @@ class OidcdClient implements OidcdClientInterface
     /**
      * @throws OidcdConfigurationException
      * @throws OidcdConfigurationResolveException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     protected function getUserinfoEndpoint(): string
     {

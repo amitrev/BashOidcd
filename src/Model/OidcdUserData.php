@@ -21,24 +21,9 @@ class OidcdUserData
         return $this->getUserDataString('sub');
     }
 
-    public function getDisplayName(): string
+    public function getFields(): array
     {
-        return $this->getUserDataString('preferred_username');
-    }
-
-    public function getFamilyName(): string
-    {
-        return $this->getUserDataString('family_name');
-    }
-
-    public function getFullName(): string
-    {
-        return $this->getUserDataString('name');
-    }
-
-    public function getGivenName(): string
-    {
-        return $this->getUserDataString('given_name');
+        return $this->getUserDataArray('fields');
     }
 
     public function getEmail(): string
@@ -49,11 +34,6 @@ class OidcdUserData
     public function getEmailVerified(): bool
     {
         return $this->getUserDataBoolean('email_verified');
-    }
-
-    public function getUids(): array
-    {
-        return $this->getUserDataArray('uids');
     }
 
     public function getUserDataBoolean(string $key): bool
