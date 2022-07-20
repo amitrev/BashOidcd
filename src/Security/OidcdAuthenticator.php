@@ -7,6 +7,7 @@ use Bash\Bundle\OIDCDBundle\OidcdClientInterface;
 use Bash\Bundle\OIDCDBundle\OidcdSessionStorage;
 use Bash\Bundle\OIDCDBundle\Security\Exception\OidcdAuthenticationException;
 use Bash\Bundle\OIDCDBundle\Security\Exception\UnsupportedManagerException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -78,6 +79,7 @@ class OidcdAuthenticator implements AuthenticatorInterface, AuthenticationEntryP
         try {
             $authData = $this->oidcClient->authenticate($request);
 
+            // TODO: if authData->idToken exists then use getUserDataByToken();
             $userData = $this->oidcClient->retrieveUserInfo($authData);
 
             if (!$userIdentifier = $userData->getUserDataString($this->userIdentifierProperty)) {
@@ -105,7 +107,15 @@ class OidcdAuthenticator implements AuthenticatorInterface, AuthenticationEntryP
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        return $this->successHandler->onAuthenticationSuccess($request, $token);
+        $response = $this->successHandler->onAuthenticationSuccess($request, $token);
+
+        $redirectTarget = $request->getSession()->getBag('attributes')->get('bash_target');
+
+        if (null !== $redirectTarget && false === strpos($redirectTarget, 'login')) {
+            return new RedirectResponse($redirectTarget);
+        }
+
+        return $response;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response

@@ -129,6 +129,7 @@ class OidcdClient implements OidcdClientInterface
         // Store remember me state
         $parameter = $this->requestStack->getCurrentRequest()->get($this->rememberMeParameter);
         $this->sessionStorage->storeRememberMe($forceRememberMe || 'true' === $parameter || 'on' === $parameter || '1' === $parameter || 'yes' === $parameter || true === $parameter);
+        $this->requestStack->getSession()->set('bash_target', $this->requestStack->getCurrentRequest()->getUri());
 
         // Remove security session state
         $session = $this->requestStack->getSession();
