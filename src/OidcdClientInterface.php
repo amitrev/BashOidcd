@@ -46,4 +46,9 @@ interface OidcdClientInterface
      * @throws OidcdException
      */
     public function retrieveUserInfo(OidcdTokens $tokens): OidcdUserData;
+
+    /**
+     * Retrieve the user information.
+     */
+    public function getUserDataByToken(string $idToken): ?OidcdUserData;
 }
