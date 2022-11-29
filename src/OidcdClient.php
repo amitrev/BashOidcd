@@ -314,7 +314,7 @@ class OidcdClient implements OidcdClientInterface
         // Use basic auth if offered
         $headers = [];
         if (in_array('client_secret_basic', $this->getTokenEndpointAuthMethods(), true)) {
-            $headers = ['Authorization: Basic '.base64_encode(urlencode($this->clientId).':'.urlencode($this->clientSecret))];
+            $headers = ['Authorization: Basic '.base64_encode(urlencode($this->clientId).':'.urlencode($this->clientSecret)), 'Access-Control-Allow-Origin' => '*'];
             unset($params['client_secret']);
         }
 
