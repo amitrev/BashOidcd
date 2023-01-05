@@ -106,9 +106,13 @@ class OidcdClient implements OidcdClientInterface
             $this->requestTokens('refresh_token', null, null, $refreshToken), false);
     }
 
-    public function extraxctSubFromLogoutToken(string $logoutToken): ?string
+    public function extractSubFromLogoutToken(string $logoutToken): ?string
     {
-        $data = $this->jwtHelper->decodeJwt($logoutToken, 1);
+        try {
+            $data = $this->jwtHelper->decodeJwt($logoutToken, 1);
+        } catch (OidcdException $e) {
+        }
+
         return $data['sub'] ?? null;
     }
 
