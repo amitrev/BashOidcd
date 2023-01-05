@@ -106,6 +106,12 @@ class OidcdClient implements OidcdClientInterface
             $this->requestTokens('refresh_token', null, null, $refreshToken), false);
     }
 
+    public function extraxctSubFromLogoutToken(string $logoutToken): ?string
+    {
+        $data = $this->jwtHelper->decodeJwt($logoutToken, 1);
+        return $data['sub'] ?? null;
+    }
+
     public function generateAuthorizationRedirect(?string $prompt = null, array $scopes = ['openid'], bool $forceRememberMe = false): RedirectResponse
     {
         $data = [
