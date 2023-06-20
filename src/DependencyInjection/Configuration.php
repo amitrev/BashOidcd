@@ -42,6 +42,9 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('redirect_route')
             ->defaultValue('/login_check')
             ->end() // redirect_route
+            ->scalarNode('site_name')
+            ->isRequired()
+            ->end() // site_name
             ->arrayNode('custom_client_headers')
             ->scalarPrototype()->end()
             ->end() // custom_client_headers

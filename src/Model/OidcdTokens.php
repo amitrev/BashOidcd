@@ -3,19 +3,17 @@
 namespace Bash\Bundle\OIDCDBundle\Model;
 
 use Bash\Bundle\OIDCDBundle\Exception\OidcdException;
-use DateTimeImmutable;
-use stdClass;
 
 class OidcdTokens
 {
     private string $accessToken;
     private string $idToken;
-    private ?DateTimeImmutable $expiry = null;
+    private ?\DateTimeImmutable $expiry = null;
     private ?string $refreshToken = null;
     private ?array $scope = null;
 
     /** @throws OidcdException */
-    public function __construct(stdClass $tokens)
+    public function __construct(\stdClass $tokens)
     {
         // These are the only required parameters per https://tools.ietf.org/html/rfc6749#section-4.2.2
         if (!isset($tokens->id_token, $tokens->access_token)) {
@@ -26,7 +24,7 @@ class OidcdTokens
         $this->idToken = $tokens->id_token;
 
         if (isset($tokens->expires_in)) {
-            $this->expiry = DateTimeImmutable::createFromFormat('U', (string) (time() + $tokens->expires_in));
+            $this->expiry = \DateTimeImmutable::createFromFormat('U', (string) (time() + $tokens->expires_in));
         }
 
         if (isset($tokens->refresh_token)) {
@@ -43,7 +41,7 @@ class OidcdTokens
         return $this->accessToken;
     }
 
-    public function getExpiry(): ?DateTimeImmutable
+    public function getExpiry(): ?\DateTimeImmutable
     {
         return $this->expiry;
     }

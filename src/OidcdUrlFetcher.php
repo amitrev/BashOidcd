@@ -13,7 +13,7 @@ class OidcdUrlFetcher
         $this->customClientHeaders = $customClientHeaders;
     }
 
-    public function fetchUrl(string $url, ?array $params = null, array $headers = []): string
+    public function fetchUrl(string $url, array $params = null, array $headers = []): string
     {
         $ch = curl_init();
 

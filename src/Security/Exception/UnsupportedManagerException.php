@@ -2,9 +2,7 @@
 
 namespace Bash\Bundle\OIDCDBundle\Security\Exception;
 
-use RuntimeException;
-
-class UnsupportedManagerException extends RuntimeException
+class UnsupportedManagerException extends \RuntimeException
 {
     public function __construct()
     {

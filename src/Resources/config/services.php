@@ -8,10 +8,11 @@ use Bash\Bundle\OIDCDBundle\OidcdSessionStorage;
 use Bash\Bundle\OIDCDBundle\OidcdUrlFetcher;
 use Bash\Bundle\OIDCDBundle\Security\OidcdAuthenticator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Contracts\Cache\CacheInterface;
+
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 return static function (ContainerConfigurator $configurator): void {
     $configurator->services()
@@ -40,5 +41,5 @@ return static function (ContainerConfigurator $configurator): void {
 
       ->set(BashOIDCDExtension::CLIENT_LOCATOR_ID, OidcdClientLocator::class)
       ->alias(OidcdClientLocator::class, BashOIDCDExtension::CLIENT_LOCATOR_ID)
-  ;
+    ;
 };

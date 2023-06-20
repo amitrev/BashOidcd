@@ -5,9 +5,7 @@ namespace Bash\Bundle\OIDCDBundle;
 use Bash\Bundle\OIDCDBundle\Exception\OidcdException;
 use Bash\Bundle\OIDCDBundle\Model\OidcdTokens;
 use Bash\Bundle\OIDCDBundle\Security\Exception\OidcdAuthenticationException;
-use JsonException;
 use phpseclib3\Crypt\RSA;
-use RuntimeException;
 
 class OidcdJwtHelper
 {
@@ -73,12 +71,12 @@ class OidcdJwtHelper
 
         try {
             return json_decode(self::base64url_decode($parts[$section]), false, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
+        } catch (\JsonException $e) {
             return null;
         }
     }
 
-    public function verifyJwtClaims(string $issuer, ?object $claims, ?OidcdTokens $tokens = null, bool $verifyNonce = true): bool
+    public function verifyJwtClaims(string $issuer, ?object $claims, OidcdTokens $tokens = null, bool $verifyNonce = true): bool
     {
         $expectedAtHash = '';
 
@@ -105,7 +103,7 @@ class OidcdJwtHelper
         }
 
         return ($claims->iss === $issuer)
-            && (($claims->aud === $this->clientId) || (in_array($this->clientId, $claims->aud, true)))
+            && (($claims->aud === $this->clientId) || in_array($this->clientId, $claims->aud, true))
             && (!$verifyNonce || $claims->nonce === $nonce)
             && (!isset($claims->exp) || $claims->exp >= time())
             && (!isset($claims->nbf) || $claims->nbf <= time())
@@ -123,14 +121,14 @@ class OidcdJwtHelper
         $signature = self::base64url_decode(array_pop($parts));
         try {
             $header = json_decode(self::base64url_decode($parts[0]), false, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
+        } catch (\JsonException $e) {
             // TODO: Error case. throw exception???
             return false;
         }
         $payload = implode('.', $parts);
         try {
             $jwks = json_decode($this->urlFetcher->fetchUrl($jwksUri), false, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
+        } catch (\JsonException $e) {
             // TODO: Error case. throw exception???
             return false;
         }
@@ -168,7 +166,7 @@ class OidcdJwtHelper
                 ->withPadding(RSA::ENCRYPTION_PKCS1 | RSA::SIGNATURE_PKCS1)
                 ->withHash($hashtype);
         } else {
-            throw new RuntimeException('Unable to find phpseclib Crypt/RSA.php.  Ensure phpseclib/phpseclib is installed.');
+            throw new \RuntimeException('Unable to find phpseclib Crypt/RSA.php.  Ensure phpseclib/phpseclib is installed.');
         }
 
         return $rsa->verify($payload, $signature);

@@ -8,11 +8,7 @@ use Bash\Bundle\OIDCDBundle\Exception\OidcdException;
 use Bash\Bundle\OIDCDBundle\Model\OidcdTokens;
 use Bash\Bundle\OIDCDBundle\Model\OidcdUserData;
 use Bash\Bundle\OIDCDBundle\Security\Exception\OidcdAuthenticationException;
-use Exception;
-use InvalidArgumentException;
-use LogicException;
 use phpseclib3\Crypt\RSA;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -38,6 +34,8 @@ class OidcdClient implements OidcdClientInterface
     private string $clientId;
     private string $clientSecret;
     private string $redirectRoute;
+
+    protected string $siteName;
     private string $rememberMeParameter;
 
     public function __construct(
@@ -52,10 +50,12 @@ class OidcdClient implements OidcdClientInterface
         string $clientId,
         string $clientSecret,
         string $redirectRoute,
+        string $siteName,
         string $rememberMeParameter)
     {
         $this->rememberMeParameter = $rememberMeParameter;
         $this->redirectRoute = $redirectRoute;
+        $this->siteName = $siteName;
         $this->clientSecret = $clientSecret;
         $this->clientId = $clientId;
         $this->wellKnownCacheTime = $wellKnownCacheTime;
@@ -68,11 +68,11 @@ class OidcdClient implements OidcdClientInterface
         $this->httpUtils = $httpUtils;
 
         if (!class_exists(RSA::class)) {
-            throw new RuntimeException('Unable to find phpseclib Crypt/RSA.php.  Ensure phpseclib3 is installed.');
+            throw new \RuntimeException('Unable to find phpseclib Crypt/RSA.php.  Ensure phpseclib3 is installed.');
         }
 
         if (!$this->wellKnownUrl || false === filter_var($this->wellKnownUrl, FILTER_VALIDATE_URL)) {
-            throw new LogicException(sprintf('Invalid well known url (%s) for OIDC', $this->wellKnownUrl));
+            throw new \LogicException(sprintf('Invalid well known url (%s) for OIDC', $this->wellKnownUrl));
         }
     }
 
@@ -116,7 +116,7 @@ class OidcdClient implements OidcdClientInterface
         return $data['sub'] ?? null;
     }
 
-    public function generateAuthorizationRedirect(?string $prompt = null, array $scopes = ['openid'], bool $forceRememberMe = false): RedirectResponse
+    public function generateAuthorizationRedirect(string $prompt = null, array $scopes = ['openid'], bool $forceRememberMe = false): RedirectResponse
     {
         $data = [
             'client_id' => $this->clientId,
@@ -130,7 +130,7 @@ class OidcdClient implements OidcdClientInterface
         if ($prompt) {
             $validPrompts = ['none', 'login', 'consent', 'select_account', 'create'];
             if (!in_array($prompt, $validPrompts)) {
-                throw new InvalidArgumentException(sprintf('The prompt parameter need to be one of ("%s"), but "%s" given', implode('", "', $validPrompts), $prompt));
+                throw new \InvalidArgumentException(sprintf('The prompt parameter need to be one of ("%s"), but "%s" given', implode('", "', $validPrompts), $prompt));
             }
 
             $data['prompt'] = $prompt;
@@ -139,7 +139,11 @@ class OidcdClient implements OidcdClientInterface
         // Store remember me state
         $parameter = $this->requestStack->getCurrentRequest()->get($this->rememberMeParameter);
         $this->sessionStorage->storeRememberMe($forceRememberMe || 'true' === $parameter || 'on' === $parameter || '1' === $parameter || 'yes' === $parameter || true === $parameter);
-        $this->requestStack->getSession()->set('bash_target', $this->requestStack->getCurrentRequest()->getUri());
+
+        $referer = $this->requestStack->getCurrentRequest()->headers->get('referer');
+        if (false !== strpos($referer, $this->siteName)) {
+            $this->requestStack->getSession()->set('bash_target', $referer);
+        }
 
         // Remove security session state
         $session = $this->requestStack->getSession();
@@ -392,7 +396,7 @@ class OidcdClient implements OidcdClientInterface
     {
         try {
             $wellKnown = $this->urlFetcher->fetchUrl($this->wellKnownUrl);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new OidcdConfigurationResolveException(sprintf('Could not retrieve OIDC configuration from "%s".', $this->wellKnownUrl), 0, $e);
         }
 

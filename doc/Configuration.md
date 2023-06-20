@@ -10,6 +10,7 @@ bash_oidcd:
             client_secret: '%env(OIDCD_CLIENT_SECRET)%'
             well_known_cache_time: 3600
             redirect_route: '/login/check'
+            site_name: 'sportal.bg'
             # Extra configuration options
             #custom_client_headers: []
 

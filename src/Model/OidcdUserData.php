@@ -2,14 +2,13 @@
 
 namespace Bash\Bundle\OIDCDBundle\Model;
 
-use stdClass;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class OidcdUserData
 {
     private static ?PropertyAccessor $accessor = null;
-    private stdClass $userData;
+    private \stdClass $userData;
 
     public function __construct(array $userData)
     {

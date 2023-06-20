@@ -4,7 +4,6 @@ namespace Bash\Bundle\OIDCDBundle;
 
 use Bash\Bundle\OIDCDBundle\Exception\OidcdClientNotFoundException;
 use Psr\Container\ContainerInterface;
-use Throwable;
 
 class OidcdClientLocator
 {
@@ -27,7 +26,7 @@ class OidcdClientLocator
 
         try {
             return $this->locator->get($name);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             throw new OidcdClientNotFoundException($name, $e);
         }
     }
