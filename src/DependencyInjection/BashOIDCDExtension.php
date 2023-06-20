@@ -74,6 +74,7 @@ class BashOIDCDExtension extends ConfigurableExtension
             ->addArgument($config['client_id'])
             ->addArgument($config['client_secret'])
             ->addArgument($config['redirect_route'])
+            ->addArgument($config['site_name'])
             ->addArgument($config['remember_me_parameter']);
 
         $container
