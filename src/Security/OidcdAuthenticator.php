@@ -80,7 +80,14 @@ class OidcdAuthenticator implements AuthenticatorInterface, AuthenticationEntryP
             $authData = $this->oidcClient->authenticate($request);
 
             // TODO: if authData->idToken exists then use getUserDataByToken();
-            $userData = $this->oidcClient->retrieveUserInfo($authData);
+            $idToken = $authData->getIdToken();
+            if ($idToken !== '') {
+                $userData = $this->oidcClient->getUserDataByToken($idToken);
+            }
+
+            if (!isset($userData)) {
+                $userData = $this->oidcClient->retrieveUserInfo($authData);
+            }
 
             if (!$userIdentifier = $userData->getUserDataString($this->userIdentifierProperty)) {
                 throw new UserNotFoundException(sprintf('User identifier property (%s) yielded empty user identifier', $this->userIdentifierProperty));

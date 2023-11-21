@@ -140,11 +140,6 @@ class OidcdClient implements OidcdClientInterface
         $parameter = $this->requestStack->getCurrentRequest()->get($this->rememberMeParameter);
         $this->sessionStorage->storeRememberMe($forceRememberMe || 'true' === $parameter || 'on' === $parameter || '1' === $parameter || 'yes' === $parameter || true === $parameter);
 
-        $referer = $this->requestStack->getCurrentRequest()->headers->get('referer');
-        if (false !== strpos($referer, $this->siteName)) {
-            $this->requestStack->getSession()->set('bash_target', $referer);
-        }
-
         // Remove security session state
         $session = $this->requestStack->getSession();
         $session->remove(Security::AUTHENTICATION_ERROR);
