@@ -82,7 +82,7 @@ class OidcdAuthenticator implements AuthenticatorInterface, AuthenticationEntryP
             // TODO: if authData->idToken exists then use getUserDataByToken();
             $idToken = $authData->getIdToken();
             if ($idToken !== '') {
-                $userData = $this->oidcClient->getUserDataByToken($idToken);
+                $userData = $this->oidcClient->getUserDataByToken($idToken, $authData->getRefreshToken());
             }
 
             if (!isset($userData)) {

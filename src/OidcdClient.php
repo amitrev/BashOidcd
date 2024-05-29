@@ -176,7 +176,7 @@ class OidcdClient implements OidcdClientInterface
         return new OidcdUserData($data);
     }
 
-    public function getUserDataByToken(string $idToken,  ?string $refreshToken = null): ?OidcdUserData
+    public function getUserDataByToken(string $idToken, ?string $refreshToken = null): ?OidcdUserData
     {
         try {
             $data = $this->jwtHelper->decodeJwt($idToken, 1);

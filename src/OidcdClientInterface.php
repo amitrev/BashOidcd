@@ -50,5 +50,5 @@ interface OidcdClientInterface
     /**
      * Retrieve the user information.
      */
-    public function getUserDataByToken(string $idToken): ?OidcdUserData;
+    public function getUserDataByToken(string $idToken, ?string $refreshToken = null): ?OidcdUserData;
 }
