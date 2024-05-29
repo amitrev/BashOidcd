@@ -192,7 +192,7 @@ class OidcdClient implements OidcdClientInterface
         unset($data['nonce'], $data['at_hash'], $data['aud'], $data['exp'], $data['iat'], $data['iss']);
         $data['fields'] = (array) $data['fields'];
 
-        if ($refreshToken === null) {
+        if ($refreshToken !== null) {
             $data['refresh_token'] = $refreshToken;
         }
 
@@ -309,7 +309,7 @@ class OidcdClient implements OidcdClientInterface
     /**
      * @throws OidcdException
      */
-    private function requestTokens(string $grantType, string $code = null, string $redirectUrl = null, string $refreshToken = null): OidcdTokens
+    private function requestTokens(string $grantType, ?string $code = null, ?string $redirectUrl = null, ?string $refreshToken = null): OidcdTokens
     {
         $params = [
             'grant_type' => $grantType,
