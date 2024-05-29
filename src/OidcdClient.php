@@ -170,10 +170,13 @@ class OidcdClient implements OidcdClientInterface
             throw new OidcdException('Error retrieving the user info from the endpoint.');
         }
 
+        $data['refresh_token'] = $tokens->getRefreshToken();
+        $data['is_anonymous'] = false;
+
         return new OidcdUserData($data);
     }
 
-    public function getUserDataByToken(string $idToken): ?OidcdUserData
+    public function getUserDataByToken(string $idToken,  ?string $refreshToken = null): ?OidcdUserData
     {
         try {
             $data = $this->jwtHelper->decodeJwt($idToken, 1);
@@ -188,6 +191,12 @@ class OidcdClient implements OidcdClientInterface
         $data = (array) $data;
         unset($data['nonce'], $data['at_hash'], $data['aud'], $data['exp'], $data['iat'], $data['iss']);
         $data['fields'] = (array) $data['fields'];
+
+        if ($refreshToken === null) {
+            $data['refresh_token'] = $refreshToken;
+        }
+
+        $data['is_anonymous'] = false;
 
         return new OidcdUserData($data);
     }

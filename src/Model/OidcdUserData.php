@@ -35,6 +35,16 @@ class OidcdUserData
         return $this->getUserDataBoolean('email_verified');
     }
 
+    public function getRefreshToken(): string
+    {
+        return $this->getUserDataString('refresh_token');
+    }
+
+    public function getIsAnonymous(): bool
+    {
+        return $this->getUserDataBoolean('is_anonymous');
+    }
+
     public function getUserDataBoolean(string $key): bool
     {
         return $this->getUserData($key) ?: false;
