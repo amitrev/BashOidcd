@@ -171,7 +171,7 @@ class OidcdClient implements OidcdClientInterface
         }
 
         $data['refresh_token'] = $tokens->getRefreshToken();
-        $data['is_anonymous'] = false;
+        $data['is_anonymous'] = 0;
 
         return new OidcdUserData($data);
     }
@@ -196,7 +196,7 @@ class OidcdClient implements OidcdClientInterface
             $data['refresh_token'] = $refreshToken;
         }
 
-        $data['is_anonymous'] = false;
+        $data['is_anonymous'] = 0;
 
         return new OidcdUserData($data);
     }
