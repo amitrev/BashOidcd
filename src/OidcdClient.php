@@ -101,6 +101,7 @@ class OidcdClient implements OidcdClientInterface
     public function refreshTokens(string $refreshToken): OidcdTokens
     {
         $this->sessionStorage->clearState();
+        $this->sessionStorage->clearRememberMe();
 
         return $this->verifyTokens(
             $this->requestTokens('refresh_token', null, null, $refreshToken), false);
