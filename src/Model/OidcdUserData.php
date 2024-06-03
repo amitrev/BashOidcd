@@ -40,14 +40,19 @@ class OidcdUserData
         return $this->getUserDataString('refresh_token');
     }
 
-    public function getIsAnonymous(): bool
+    public function getIsAnonymous(): int
     {
-        return $this->getUserDataBoolean('is_anonymous');
+        return $this->getUserDataInt('is_anonymous');
     }
 
     public function getUserDataBoolean(string $key): bool
     {
         return $this->getUserData($key) ?: false;
+    }
+
+    public function getUserDataInt(string $key): int
+    {
+        return $this->getUserData($key) ?: 0;
     }
 
     public function getUserDataString(string $key): string
