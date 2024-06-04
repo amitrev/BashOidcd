@@ -51,4 +51,11 @@ interface OidcdClientInterface
      * Retrieve the user information.
      */
     public function getUserDataByToken(string $idToken, ?string $refreshToken = null): ?OidcdUserData;
+
+    /**
+     * Extract sub from Logout token
+     * @param string $logoutToken
+     * @return string|null
+     */
+    public function extractSubFromLogoutToken(string $logoutToken): ?string;
 }
