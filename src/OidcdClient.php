@@ -177,7 +177,7 @@ class OidcdClient implements OidcdClientInterface
         return new OidcdUserData($data);
     }
 
-    public function getUserDataByToken(string $idToken, ?string $refreshToken = null): ?OidcdUserData
+    public function getUserDataByToken(string $idToken, ?string $refreshToken = null, bool $isAnonymous = false): ?OidcdUserData
     {
         try {
             $data = $this->jwtHelper->decodeJwt($idToken, 1);
@@ -189,6 +189,17 @@ class OidcdClient implements OidcdClientInterface
             return null;
         }
 
+        if ($isAnonymous === true) {
+            $data['fields'] = [
+                'firstName' => '',
+                'lastName' => 'Anonynous',
+                'nickname' => 'Anonynous'
+            ];
+
+            $data['email'] = 'anonynous@user.com';
+            $data['email_verified'] = false;
+        }
+
         $data = (array) $data;
         unset($data['nonce'], $data['at_hash'], $data['aud'], $data['exp'], $data['iat'], $data['iss']);
         $data['fields'] = (array) $data['fields'];
@@ -197,10 +208,52 @@ class OidcdClient implements OidcdClientInterface
             $data['refresh_token'] = $refreshToken;
         }
 
-        $data['is_anonymous'] = 0;
+        $data['is_anonymous'] = $isAnonymous ? 1 : 0;
 
         return new OidcdUserData($data);
     }
+
+    public function getAnonymousToken(bool $forceRememberMe = true): OidcdTokens
+    {
+        // Store remember me state
+        $this->sessionStorage->storeRememberMe($forceRememberMe);
+
+        // Remove security session state
+        $session = $this->requestStack->getSession();
+        $session->remove(Security::AUTHENTICATION_ERROR);
+        $session->remove(Security::LAST_USERNAME);
+
+        $params = [
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'grant_type' => 'anonymous_user_id_token'
+        ];
+
+        try {
+            $jsonToken = json_decode($this->urlFetcher->fetchUrl($this->getTokenEndpoint(), $params), false, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new OidcdException('Parse json token.');
+        }
+
+        // Throw an error if the server returns one
+        if (!isset($jsonToken->id_token)) {
+            throw new OidcdException('Missing anonymous token.');
+        }
+
+        $expiresIn = 86400 * 30;
+        $tokenData = $this->jwtHelper->decodeJwt($jsonToken->id_token, 1);
+        if ( isset($tokenData->exp) ) {
+            $expiresIn = $tokenData->exp - time();
+        }
+        unset($tokenData);
+
+        $jsonToken->access_token = $jsonToken->id_token;
+        $jsonToken->expires_in = $expiresIn;
+        $jsonToken->refresh_token = $jsonToken->id_token;
+
+        return new OidcdTokens($jsonToken);
+    }
+
 
     /** TODO: refactoring maybe ?!?! */
 
