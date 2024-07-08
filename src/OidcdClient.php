@@ -190,6 +190,8 @@ class OidcdClient implements OidcdClientInterface
             return null;
         }
 
+        $data = (array) $data;
+
         if ($isAnonymous === true) {
             $data['fields'] = [
                 'firstName' => '',
@@ -201,7 +203,6 @@ class OidcdClient implements OidcdClientInterface
             $data['email_verified'] = false;
         }
 
-        $data = (array) $data;
         unset($data['nonce'], $data['at_hash'], $data['aud'], $data['exp'], $data['iat'], $data['iss']);
         $data['fields'] = (array) $data['fields'];
 
