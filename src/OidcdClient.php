@@ -9,6 +9,7 @@ use Bash\Bundle\OIDCDBundle\Model\OidcdTokens;
 use Bash\Bundle\OIDCDBundle\Model\OidcdUserData;
 use Bash\Bundle\OIDCDBundle\Security\Exception\OidcdAuthenticationException;
 use phpseclib3\Crypt\RSA;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -213,24 +214,34 @@ class OidcdClient implements OidcdClientInterface
         return new OidcdUserData($data);
     }
 
-    public function getAnonymousToken(bool $forceRememberMe = true): OidcdTokens
+    /**
+     * @throws OidcdException
+     * @throws InvalidArgumentException
+     * @throws OidcdConfigurationResolveException
+     * @throws OidcdConfigurationException
+     */
+    public function getAnonymousToken(bool $forceRememberMe = true, ?string $idToken = null): OidcdTokens
     {
-        // Store remember me state
-        $this->sessionStorage->storeRememberMe($forceRememberMe);
+        if ($idToken === null) {
+            // Store remember me state
+            $this->sessionStorage->storeRememberMe($forceRememberMe);
 
-        // Remove security session state
-        $session = $this->requestStack->getSession();
-        $session->remove(Security::AUTHENTICATION_ERROR);
-        $session->remove(Security::LAST_USERNAME);
+            // Remove security session state
+            $session = $this->requestStack->getSession();
+            $session->remove(Security::AUTHENTICATION_ERROR);
+            $session->remove(Security::LAST_USERNAME);
 
-        $params = [
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'grant_type' => 'anonymous_user_id_token'
-        ];
+            $params = [
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret,
+                'grant_type' => 'anonymous_user_id_token'
+            ];
+
+            $idToken = $this->urlFetcher->fetchUrl($this->getTokenEndpoint(), $params);
+        }
 
         try {
-            $jsonToken = json_decode($this->urlFetcher->fetchUrl($this->getTokenEndpoint(), $params), false, 512, JSON_THROW_ON_ERROR);
+            $jsonToken = json_decode($idToken, false, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             throw new OidcdException('Parse json token.');
         }
@@ -243,7 +254,7 @@ class OidcdClient implements OidcdClientInterface
         $expiresIn = 86400 * 30;
         $tokenData = $this->jwtHelper->decodeJwt($jsonToken->id_token, 1);
         if ( isset($tokenData->exp) ) {
-            $expiresIn = $tokenData->exp - time();
+            $expiresIn = (int)$tokenData->exp - time();
         }
         unset($tokenData);
 
@@ -253,7 +264,6 @@ class OidcdClient implements OidcdClientInterface
 
         return new OidcdTokens($jsonToken);
     }
-
 
     /** TODO: refactoring maybe ?!?! */
 
