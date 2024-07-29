@@ -195,11 +195,11 @@ class OidcdClient implements OidcdClientInterface
         if ($isAnonymous === true) {
             $data['fields'] = [
                 'firstName' => '',
-                'lastName' => 'Anonynous',
-                'nickname' => 'Anonynous'
+                'lastName' => 'Anonymous',
+                'nickname' => 'Anonymous'
             ];
 
-            $data['email'] = 'anonynous@user.com';
+            $data['email'] = 'anonymous@anonymous.com';
             $data['email_verified'] = false;
         }
 
