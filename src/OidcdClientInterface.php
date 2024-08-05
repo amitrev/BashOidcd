@@ -50,7 +50,7 @@ interface OidcdClientInterface
     /**
      * Retrieve the user information.
      */
-    public function getUserDataByToken(string $idToken, ?string $refreshToken = null): ?OidcdUserData;
+    public function getUserDataByToken(string $idToken, ?string $refreshToken = null, bool $isAnonymous = false): ?OidcdUserData;
 
     /**
      * Extract sub from Logout token
